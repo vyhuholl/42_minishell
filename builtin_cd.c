@@ -6,7 +6,7 @@
 /*   By: sghezn <sghezn@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/04/22 19:03:32 by sghezn            #+#    #+#             */
-/*   Updated: 2020/05/10 17:01:11 by sghezn           ###   ########.fr       */
+/*   Updated: 2020/05/16 18:27:25 by sghezn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int		ft_path_err(char *path)
 		ft_putstr_fd("minishell: cd: no such file or directory: ", 2);
 	else if (!S_ISDIR(dir_stat.st_mode))
 		ft_putstr_fd("minishell: cd: not a directory: ", 2);
-	else if (access(path, X_OK) == -1)
+	else if (access(path, R_OK) == -1)
 		ft_putstr_fd("minishell: cd: permission denied: ", 2);
 	else
 		return (1);

@@ -6,7 +6,7 @@
 /*   By: sghezn <sghezn@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/10 01:36:35 by sghezn            #+#    #+#             */
-/*   Updated: 2020/05/16 14:38:14 by sghezn           ###   ########.fr       */
+/*   Updated: 2020/05/16 17:00:56 by sghezn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,8 +103,8 @@ char	**ft_parse_expansions(char **arr, char ***env)
 	while (*(arr + ++i))
 	{
 		((*(new + j) = ft_parse_var(ft_strdup(*(arr + i)), env))) ? j++ : 0;
-		if (*(new + j) && **(new + j) && **(new + j) == '~'
-				&& !(*(new + j) = ft_tilde(*(new + j), env)))
+		if (j && *(new + j - 1) && **(new + j - 1) && **(new + j - 1) == '~'
+				&& !(*(new + j - 1) = ft_tilde(*(new + j - 1), env)))
 		{
 			ft_free_lines(&arr);
 			ft_free_lines(&new);

@@ -6,7 +6,7 @@
 /*   By: sghezn <sghezn@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/04/23 03:33:29 by sghezn            #+#    #+#             */
-/*   Updated: 2020/05/16 14:36:29 by sghezn           ###   ########.fr       */
+/*   Updated: 2020/05/16 19:18:50 by sghezn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,44 +23,30 @@ char	*ft_check_path(char **cmd, char **paths, char **err)
 	{
 		file = ft_strnew(ft_strlen(cmd[0]) + ft_strlen(paths[i]) + 1);
 		file = ft_strcat(ft_strcat(ft_strcpy(file, paths[i]), "/"), cmd[0]);
-		if ((stat(file, &f_stat)) != -1)
+		if ((stat(file, &f_stat)) != -1 && !S_ISDIR(f_stat.st_mode))
 		{
-			if ((f_stat.st_mode & S_IXUSR) != S_IXUSR)
+			if (access(file, X_OK) == -1)
 				*err = ft_strdup("permission denied: ");
 			else
-			{
-				ft_free_lines(&paths);
 				return (file);
-			}
 		}
 		ft_strdel(&file);
 	}
-	ft_free_lines(&paths);
 	return (NULL);
 }
 
-int		ft_check_cwd(char **cmd, char **err, char ***env)
+int		ft_check_cwd(char **cmd, char **err)
 {
 	struct stat	f_stat;
 
 	if ((stat(cmd[0], &f_stat)) != -1)
 	{
-		if ((f_stat.st_mode & S_IXUSR) != S_IXUSR)
+		if (S_ISDIR(f_stat.st_mode))
+			*err = ft_strdup("is a directory: ");
+		else if (access(cmd[0], X_OK) == -1)
 			*err = ft_strdup("permission denied: ");
 		else
-		{
-			if (S_ISDIR(f_stat.st_mode))
-			{
-				if (ft_arr_len(cmd) == 1)
-				{
-					ft_change_dir(cmd[0], env);
-					return (2);
-				}
-				*err = ft_strdup("permission denied: ");
-				return (0);
-			}
 			return (1);
-		}
 	}
 	(!(*err)) ? *err = ft_strdup("command not found: ") : 0;
 	return (0);
@@ -77,18 +63,18 @@ char	*ft_check_cmd(char **cmd, char ***env)
 	if (!ft_strequ(cmd[0], "..") && (path = ft_get_var(*env, "PATH")))
 	{
 		paths = ft_strsplit(path, ':');
+		file = ft_check_path(cmd, paths, &err);
 		ft_strdel(&path);
-		if ((file = ft_check_path(cmd, paths, &err)) != NULL)
+		ft_free_lines(&paths);
+		if (file != NULL)
 			return (file);
 	}
-	if (ft_check_cwd(cmd, &err, env) == 1)
+	if (ft_check_cwd(cmd, &err) == 1)
 		return (ft_strdup(cmd[0]));
-	if (!err)
-		return (NULL);
-	ft_putstr_fd("minishell: ", 2);
-	ft_putstr_fd(err, 2);
-	ft_putendl_fd(cmd[0], 2);
-	ft_strdel(&err);
+	(err) ? ft_putstr_fd("minishell: ", 2) : 0;
+	(err) ? ft_putstr_fd(err, 2) : 0;
+	(err) ? ft_putendl_fd(cmd[0], 2) : 0;
+	(err) ? ft_strdel(&err) : 0;
 	return (NULL);
 }
 

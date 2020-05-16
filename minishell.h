@@ -6,7 +6,7 @@
 /*   By: sghezn <sghezn@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/04/22 18:43:41 by sghezn            #+#    #+#             */
-/*   Updated: 2020/05/16 14:26:18 by sghezn           ###   ########.fr       */
+/*   Updated: 2020/05/16 19:15:31 by sghezn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ char				*ft_parse_var(char *str, char ***env);
 int					ft_parse_path(char **arr);
 char				**ft_parse_expansions(char **arr, char ***env);
 char				*ft_check_path(char **cmd, char **paths, char **err);
-int					ft_check_cwd(char **cmd, char **err, char ***env);
+int					ft_check_cwd(char **cmd, char **err);
 char				*ft_check_cmd(char **cmd, char ***env);
 void				ft_fork(char *filename, char **cmd, char **env);
 void				ft_execute(char **cmd, char ***env);
