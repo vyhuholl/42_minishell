@@ -6,7 +6,7 @@
 /*   By: sghezn <sghezn@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/04/22 19:03:45 by sghezn            #+#    #+#             */
-/*   Updated: 2020/05/10 17:02:15 by sghezn           ###   ########.fr       */
+/*   Updated: 2020/05/16 14:08:21 by sghezn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ void	ft_replace(char **str, char *old, char *new)
 	int		start;
 	int		len;
 
-	if ((start = ft_strstr_index(*str, old)) != -1)
+	if (*str && (start = ft_strstr_index(*str, old)) != -1)
 	{
 		len = ft_strlen(*str) - ft_strlen(old);
 		len += (new) ? ft_strlen(new) : 0;

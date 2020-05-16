@@ -6,7 +6,7 @@
 /*   By: sghezn <sghezn@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/10 01:36:35 by sghezn            #+#    #+#             */
-/*   Updated: 2020/05/10 16:12:01 by sghezn           ###   ########.fr       */
+/*   Updated: 2020/05/16 14:38:14 by sghezn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,12 @@ int		ft_parse_path(char **arr)
 {
 	struct stat	dir_stat;
 
+	if (!arr || !*arr || !**arr)
+		return (0);
 	if (**arr == '/' && (stat(*arr, &dir_stat)) == -1)
 	{
 		ft_putstr_fd("minishell: no such file or directory: ", 2);
 		ft_putendl_fd(*arr, 2);
-		ft_free_lines(&arr);
 		return (0);
 	}
 	else if (S_ISDIR(dir_stat.st_mode))
@@ -29,7 +30,6 @@ int		ft_parse_path(char **arr)
 		{
 			ft_putstr_fd("minishell: permission denied: ", 2);
 			ft_putendl_fd(*arr, 2);
-			ft_free_lines(&arr);
 			return (0);
 		}
 	}
@@ -69,7 +69,7 @@ char	*ft_parse_var(char *str, char ***env)
 	char	*key;
 	char	*var;
 
-	while ((key = ft_find_env_var(str)) != NULL)
+	while (str && (key = ft_find_env_var(str)) != NULL)
 	{
 		if (ft_strequ(key, "$$"))
 			var = ft_itoa(((intmax_t)getpid()));
@@ -85,33 +85,34 @@ char	*ft_parse_var(char *str, char ***env)
 		(key) ? ft_strdel(&key) : 0;
 		(var) ? ft_strdel(&var) : 0;
 	}
+	if (!str)
+		return (NULL);
 	return (str);
 }
 
 char	**ft_parse_expansions(char **arr, char ***env)
 {
 	char		**new;
-	int			len;
 	int			i;
+	int			j;
 
-	len = ft_arr_len(arr);
-	if (!(new = (char**)ft_memalloc(sizeof(char*) * (len + 1))))
+	if (!(new = (char**)ft_memalloc(sizeof(char*) * (ft_arr_len(arr) + 1))))
 		ft_error("minishell: memory allocation error");
-	*(new + len) = 0;
 	i = -1;
-	while (++i < len)
+	j = 0;
+	while (*(arr + ++i))
 	{
-		*(new + i) = ft_parse_var(ft_strdup(*(arr + i)), env);
-		if (*(new + i) && **(new + i) && **(new + i) == '~' &&
-				!(*(new + i) = ft_tilde(*(new + i), env)))
+		((*(new + j) = ft_parse_var(ft_strdup(*(arr + i)), env))) ? j++ : 0;
+		if (*(new + j) && **(new + j) && **(new + j) == '~'
+				&& !(*(new + j) = ft_tilde(*(new + j), env)))
 		{
 			ft_free_lines(&arr);
 			ft_free_lines(&new);
 			return (NULL);
 		}
 	}
+	*(new + j) = 0;
 	ft_free_lines(&arr);
-	if (!ft_parse_path(new))
-		return (NULL);
+	(!ft_parse_path(new) && new) ? ft_free_lines(&new) : 0;
 	return (new);
 }

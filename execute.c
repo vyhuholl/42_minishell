@@ -6,7 +6,7 @@
 /*   By: sghezn <sghezn@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/04/23 03:33:29 by sghezn            #+#    #+#             */
-/*   Updated: 2020/05/10 12:25:38 by sghezn           ###   ########.fr       */
+/*   Updated: 2020/05/16 14:36:29 by sghezn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,7 @@ void	ft_execute(char **cmd, char ***env)
 
 	file = NULL;
 	cmd = ft_parse_expansions(cmd, env);
-	if (cmd == NULL)
+	if (!cmd || !*cmd || !**cmd)
 		return ;
 	if (ft_strequ(cmd[0], "cd"))
 		ft_cd(cmd, env);
